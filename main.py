@@ -144,19 +144,17 @@ async def clean(context):
     deleted = await client.purge_from(context.message.channel,limit=1000,check=is_command)
     await client.send_message(context.message.channel,'Deleted {} message(s)'.format(len(deleted)))
 
+'''
 @client.event
 async def on_ready():
     await client.change_presence(game=Game(name=random.choice(playing)))
-
 '''
-async def list_servers():
+
+async def change_presence_loop():
     await client.wait_until_ready()
-    while not client.is_closed:
-        print("Current servers:")
-        for server in client.servers:
-            print(server.name)
-        await asyncio.sleep(600)
-'''
+    while not client.is_closed: 
+        await client.change_presence(game=Game(name=random.choice(playing)))
+        await asyncio.sleep(60*60) # change every hour
 
-#client.loop.create_task(list_servers())
+client.loop.create_task(change_presence_loop())
 client.run(TOKEN)
