@@ -26,13 +26,11 @@ GAMESERVER = config.get('DEFAULT','GAMESERVER')
 
 client = Bot(command_prefix=BOT_PREFIX)
 
-playing = config.get('DEFAULT','PLAYING')
+playing = config.get('DEFAULT','PLAYING').split(',')
 
-allowed = config.get('DEFAULT','ALLOWED')
+allowed = config.get('DEFAULT','ALLOWED').split(',')
 
 remove_from_output = ['[K','32m','[0m']
-
-dynamic_functions = [GAMESERVER,'test']
 
 def directcommand(command, sender, channel):
     command = command.replace(GAMESERVER+' ','')
@@ -144,16 +142,20 @@ async def clean(context):
     deleted = await client.purge_from(context.message.channel,limit=1000,check=is_command)
     await client.send_message(context.message.channel,'Deleted {} message(s)'.format(len(deleted)))
 
-'''
+
 @client.event
 async def on_ready():
-    await client.change_presence(game=Game(name=random.choice(playing)))
-'''
+    print("We are connected and running as "+GAMESERVER+"!")
+    print("---"+str(len(playing))+" now playing options.")
+    print("---"+str(len(allowed))+" allowed channel(s)")
 
 async def change_presence_loop():
     await client.wait_until_ready()
-    while not client.is_closed: 
-        await client.change_presence(game=Game(name=random.choice(playing)))
+    await asyncio.sleep(4)
+    while not client.is_closed:
+        now_playing = random.choice(playing)
+        print("Now Playing: "+now_playing)
+        await client.change_presence(game=Game(name=now_playing))
         await asyncio.sleep(60*60) # change every hour
 
 client.loop.create_task(change_presence_loop())
