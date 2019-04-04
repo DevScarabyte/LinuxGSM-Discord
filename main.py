@@ -15,7 +15,7 @@ def dict_factory(cursor, row):
     d = {}
     for idx,col in enumerate(cursor.description):
         d[col[0]] = row[idx]
-    return d    
+    return d
 
 config = configparser.RawConfigParser()
 config.read('config.ini')
@@ -26,9 +26,15 @@ GAMESERVER = config.get('DEFAULT','GAMESERVER')
 
 client = Bot(command_prefix=BOT_PREFIX)
 
-playing = config.get('DEFAULT','PLAYING').split(',')
+playing = []
 
-allowed = config.get('DEFAULT','ALLOWED').split(',')
+for value in config.get('DEFAULT','PLAYING').split(','):
+    playing.append(value)
+
+allowed = []
+
+for value in config.get('DEFAULT','ALLOWED').split(','):
+    allowed.append(value)
 
 remove_from_output = ['[K','32m','[0m']
 
